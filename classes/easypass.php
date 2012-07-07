@@ -5,10 +5,23 @@ namespace EasyPass;
 class EasyPass {
     
     private $_config; 
+    static private $_defaultConfig = null;
+    
+    /**
+     *
+     * @param type $config
+     * @return \EasyPass\EasyPass 
+     */
+    static public function forge($config = array()){
+        return new self($config);
+        
+    }
     
     public function __construct($config = array()) {
-        $default = \Fuel\Core\Config::load('easypass', true);
-        $this->_config = array_merge($default, $config);
+        if(self::$_defaultConfig == NULL){
+            self::$_defaultConfig = \Fuel\Core\Config::load('easypass', true);
+        }
+        $this->_config = array_merge(self::$_defaultConfig, (array)$config);
     }
 
     public function login($username, $password) {
@@ -25,13 +38,16 @@ class EasyPass {
     }
 
     public function isAuthed() {
+        
+                
         $username = $this->_get('USERNAME');
         $time = $this->_get('TIME');
         $localPassword = $this->_get('PASSWORD');
+        
+        
         if ($localPassword == $this->_localPassword($this->_getRealPass($username), $time)) {
             return true;
         } else {
-            $this->_destory();
             return false;
         }
     }
@@ -64,5 +80,3 @@ class EasyPass {
     }
 
 }
-
-?>
