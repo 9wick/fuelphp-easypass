@@ -13,7 +13,7 @@ class EasyPass {
      * @return \EasyPass\EasyPass 
      */
     static public function forge($config = array()){
-        return new self($config);
+        return new static($config);
         
     }
     
@@ -56,23 +56,26 @@ class EasyPass {
         $this->_destory();
     }
 
-    private function _localPassword($password, $time) {
+    protected function _localPassword($password, $time) {
         return md5($password . 'up' . $time);
     }
 
-    private function _set($key, $val) {
-        \Fuel\Core\Session::set($key, $val);
+    protected function _set($key, $val) {
+        $session = \Fuel\Core\Session::get($this->_config['session_key']);
+        $session[$key] = $val;
+        \Fuel\Core\Session::set($this->_config['session_key'], $session);
     }
 
-    private function _get($key) {
-        return \Fuel\Core\Session::get($key);
+    protected function _get($key) {
+        $session = \Fuel\Core\Session::get($this->_config['session_key']);
+        return isset($session[$key]) ? $session[$key] : NULL;
     }
 
-    private function _destory() {
+    protected function _destory() {
         \Fuel\Core\Session::destroy();
     }
     
-    private function _getRealPass($username){
+    protected function _getRealPass($username){
         if(isset( $this->_config['users'][$username])){
             return  $this->_config['users'][$username];
         }
