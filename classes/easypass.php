@@ -25,6 +25,7 @@ class EasyPass {
     }
 
     public function login($username, $password) {
+        
         if ($this->_getRealPass($username) === $password) {//パスワード確認
             $time = time();
             $this->_set("USERNAME", $username);
@@ -38,8 +39,6 @@ class EasyPass {
     }
 
     public function isAuthed() {
-        
-                
         $username = $this->_get('USERNAME');
         $time = $this->_get('TIME');
         $localPassword = $this->_get('PASSWORD');
